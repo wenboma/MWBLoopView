@@ -201,7 +201,7 @@
         }
     }
     if(self.showpageLabel && self.pageLabel){
-        self.pageLabel.text = [NSString stringWithFormat:@"%lu/%lu",page+1,self.imageURLs.count-2];
+        self.pageLabel.text = [NSString stringWithFormat:@"%d/%d",(int)page+1,(int)self.imageURLs.count-2];
     }
 }
 #pragma mark - UICollectionViewDelegate
