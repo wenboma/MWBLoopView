@@ -266,6 +266,9 @@
 
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
 {
+    if((int)scrollView.contentOffset.x%(int)self.frame.size.width !=0){
+        [scrollView setContentOffset:CGPointMake(((int)scrollView.contentOffset.x/(int)self.frame.size.width)*self.frame.size.width,0)];
+    }
     //轮播滚动的时候 移动到了哪一页
     [self adjustCurrentPage:scrollView];
 }
@@ -334,5 +337,6 @@
         self.pageControl.numberOfPages = _imageURLs.count-2;
     }
     _needRefresh = YES;
+    [self applicationDidBecomeActive];
 }
 @end
