@@ -54,10 +54,18 @@ typedef enum {
 @property (nonatomic, assign) NSInteger currentPageIndex;
 /******* @brief 加载图片类型 默认 网络图片****/
 @property (nonatomic, assign) MWBImageType imageType;
-/******* @brief 没有数据的时候是否显示 默认图 默认 YES****/
+/******* @brief 没有数据的时候是否显示 默认图 默认 NO****/
 @property (nonatomic, assign) BOOL showDefaultImage;
 /******* @brief 是否显示pagecontrol 默认YES****/
 @property (nonatomic, assign) BOOL showPageControl;
 /******* @brief 是否显示 滑动到哪儿的label 默认YES****/
 @property (nonatomic, assign) BOOL showpageLabel;
+/******* @brief 是否隐藏pageControl 在只有一条或者没有数据的时候 默认隐藏YES****/
+@property (nonatomic, assign) BOOL hidePageControlWhenNoData;
+/******* @brief 是否隐藏pageLabel 在只有一条或者没有数据的时候 默认隐藏 YES****/
+@property (nonatomic, assign) BOOL hidePageLabelWhenNoData;
+/******* @brief 是否自动滚动 在只有一条或者没有数据的时候 默认不滚动 YES****/
+@property (nonatomic, assign) BOOL notAutoMovingWhenNoData;
+/******* @brief 是否可以滚动 再只有一条数据时 默认不可以 YES****/
+@property (nonatomic, assign) BOOL notScrollWhenNoData;
 @end

@@ -45,6 +45,9 @@
     }
     return self;
 }
+- (void)awakeFromNib{
+    [self makeSubViews];
+}
 - (void)makeSubViews{
     self.delegate = self;
     self.dataSource = self;
@@ -58,6 +61,13 @@
         layout.minimumInteritemSpacing = 0;
         layout.minimumLineSpacing = 0;
         [self setCollectionViewLayout:layout];
+    }else{
+        [self setCollectionViewLayout:[[UICollectionViewFlowLayout alloc]init]];
+        UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)self.collectionViewLayout;
+        layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+        layout.minimumInteritemSpacing = 0;
+        layout.minimumLineSpacing = 0;
+        [self setCollectionViewLayout:layout];
     }
     [self registerClass:[MWBLoopCollectionViewCell class] forCellWithReuseIdentifier:NSStringFromClass([MWBLoopCollectionViewCell class])];
     [self registerNofitication];
@@ -66,8 +76,9 @@
     self.imageType = WebImage;
     self.autoMoving = YES;
     self.currentPageIndex = 0;
-    self.showDefaultImage = YES;
+    self.showDefaultImage = NO;
     self.showPageControl = self.showpageLabel = YES;
+    self.hidePageControlWhenNoData = self.hidePageLabelWhenNoData = self.notAutoMovingWhenNoData = self.notScrollWhenNoData = YES;
 }
 - (void)layoutSubviews{
     [super layoutSubviews];
@@ -121,6 +132,38 @@
 //程序从暂停状态回归的时候，重新启动计时器
 - (void)applicationDidBecomeActive
 {
+    [self judgeMoving];
+}
+- (void)judgeMoving{
+    [self moving];
+    
+    if(_imageURLs.count<=3&& _imageURLs.count>0){
+        if(self.pageControl && self.showPageControl){
+            self.pageControl.hidden = NO;
+        }
+        if(self.hidePageControlWhenNoData && self.pageControl){
+            self.pageControl.hidden = YES;
+        }
+        
+        
+        if(self.pageLabel && self.showpageLabel){
+            self.pageLabel.hidden = NO;
+        }
+        if(self.hidePageLabelWhenNoData && self.pageLabel){
+            self.pageLabel.hidden = YES;
+        }
+        
+        if(self.notAutoMovingWhenNoData){
+            [self applicationWillResignActive];
+        }
+        
+        if(self.notScrollWhenNoData){
+            self.scrollEnabled = NO;
+        }
+    }
+
+}
+- (void)moving{
     if (self.autoMoving)
     {
         [self startMoving];
@@ -132,7 +175,9 @@
 
 - (void)startMoving
 {
-    [self addTimer];
+    if(_imageURLs.count>0){
+        [self addTimer];
+    }
 }
 
 - (void)stopMoving
@@ -153,7 +198,9 @@
 
 - (void)removeTimer
 {
-    [self.timer invalidate];
+    if(self.timer){
+        [self.timer invalidate];
+    }
     self.timer = nil;
 }
 
@@ -337,6 +384,8 @@
         self.pageControl.numberOfPages = _imageURLs.count-2;
     }
     _needRefresh = YES;
-    [self applicationDidBecomeActive];
+    
+    [self judgeMoving];
+
 }
 @end

@@ -18,10 +18,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.loopView = [[MWBLoopView alloc]initWithFrame:CGRectMake(0,0,[UIScreen mainScreen].bounds.size.width, 144) collectionViewLayout:[[UICollectionViewFlowLayout alloc]init]];
-    self.loopView.imageURLs = @[ @"http://pic.58pic.com/58pic/13/18/14/87m58PICVvM_1024.jpg", @"http://pic.58pic.com/58pic/13/56/99/88f58PICuBh_1024.jpg",@"http://img.hb.aicdn.com/e0c05397f8b9ee69f53d0e9e48e7257d5e45beb12185c-PS2UoU_fw658"];
-    self.loopView.autoMoving = YES;
-    self.loopView.showDefaultImage = NO;
-//    self.loopView.showpageLabel = self.loopView.showPageControl = NO;
+//    self.loopView.imageURLs = @[ @"http://pic.58pic.com/58pic/13/18/14/87m58PICVvM_1024.jpg", @"http://pic.58pic.com/58pic/13/56/99/88f58PICuBh_1024.jpg",@"http://img.hb.aicdn.com/e0c05397f8b9ee69f53d0e9e48e7257d5e45beb12185c-PS2UoU_fw658"];
+    self.loopView.imageURLs = @[ @"http://pic.58pic.com/58pic/13/18/14/87m58PICVvM_1024.jpg"];
     self.loopView.loopViewDelegate = self;
     self.loopView.placeholder = [UIImage imageNamed:@"share_weibo_default"];
     [self.view addSubview:self.loopView];
