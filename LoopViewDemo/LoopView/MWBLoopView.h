@@ -40,8 +40,6 @@ typedef enum {
 
 /******* @brief 网络获取图片数组****/
 @property (nonatomic, strong) NSArray *imageURLs;
-/******* @brief 本地图片数组****/
-@property (nonatomic, strong) NSArray *localImages;
 /******* @brief 没有图片轮播的占位图****/
 @property (nonatomic, strong) UIImage *placeholder;
 /******* @brief 是否自动播放 默认YES****/
@@ -68,4 +66,6 @@ typedef enum {
 @property (nonatomic, assign) BOOL notAutoMovingWhenNoData;
 /******* @brief 是否可以滚动 再只有一条数据时 默认不可以 YES****/
 @property (nonatomic, assign) BOOL notScrollWhenNoData;
+/******* @brief 当没有数据时 是否可点击, 默认不可以 NO****/
+@property (nonatomic, assign) BOOL couldTouchNoData;
 @end

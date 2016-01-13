@@ -77,12 +77,13 @@
     self.autoMoving = YES;
     self.currentPageIndex = 0;
     self.showDefaultImage = NO;
+    self.couldTouchNoData = NO;
     self.showPageControl = self.showpageLabel = YES;
     self.hidePageControlWhenNoData = self.hidePageLabelWhenNoData = self.notAutoMovingWhenNoData = self.notScrollWhenNoData = YES;
 }
 - (void)layoutSubviews{
     [super layoutSubviews];
-    if (self.needRefresh)
+    if (self.needRefresh && self.imageURLs.count > 0)
     {
         //最左边一张图其实是最后一张图，因此移动到第二张图，也就是imageURL的第一个URL的图。
         [self scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:(self.currentPageIndex+1)>(self.imageURLs.count-1)?1:self.currentPageIndex+1 inSection:0] atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
@@ -161,7 +162,7 @@
             self.scrollEnabled = NO;
         }
     }
-
+    
 }
 - (void)moving{
     if (self.autoMoving)
@@ -193,7 +194,7 @@
     [self removeTimer];
     NSTimeInterval speed = self.movingTimeInterval < MIN_MOVING_TIMEINTERVAL ? DEFAULT_MOVING_TIMEINTERVAL : self.movingTimeInterval;
     self.timer = [NSTimer scheduledTimerWithTimeInterval:speed target:self selector:@selector(moveToNextPage) userInfo:nil repeats:YES];
-
+    
 }
 
 - (void)removeTimer
@@ -303,10 +304,21 @@
     {
         page = indexPath.row - 1;
     }
-    if ([self.loopViewDelegate respondsToSelector:@selector(loopView:didSelected:)])
-    {
-        [self.loopViewDelegate loopView:self didSelected:page];
+    if(self.imageURLs.count > 0){
+        if ([self.loopViewDelegate respondsToSelector:@selector(loopView:didSelected:)])
+        {
+            [self.loopViewDelegate loopView:self didSelected:page];
+        }
+    }else{
+        if(self.couldTouchNoData){
+            if ([self.loopViewDelegate respondsToSelector:@selector(loopView:didSelected:)])
+            {
+                [self.loopViewDelegate loopView:self didSelected:page];
+            }
+        }
     }
+    
+    
 }
 
 #pragma mark - UIScrollerViewDelegate
@@ -338,7 +350,7 @@
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView{
-
+    
     //向左滑动时切换imageView
     if (scrollView.contentOffset.x < self.frame.size.width )
     {
@@ -386,6 +398,6 @@
     _needRefresh = YES;
     
     [self judgeMoving];
-
+    
 }
 @end
