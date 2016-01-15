@@ -111,7 +111,7 @@
         self.pageLabel.textColor = [UIColor whiteColor];
         self.pageLabel.textAlignment = 1;
     }
-    if(self.pageControl && self.showPageControl){
+    if(self.pageLabel && self.showpageLabel){
         if(self.superview && ![self.superview.subviews containsObject:self.pageLabel]){
             [self.superview addSubview:self.pageLabel];
             [self.superview bringSubviewToFront:self.pageLabel];
@@ -138,14 +138,13 @@
 - (void)judgeMoving{
     [self moving];
     
-    if(_imageURLs.count<=3&& _imageURLs.count>0){
+    if((_imageURLs.count<=3&& _imageURLs.count>0) || _imageURLs.count <= 0){
         if(self.pageControl && self.showPageControl){
             self.pageControl.hidden = NO;
         }
         if(self.hidePageControlWhenNoData && self.pageControl){
             self.pageControl.hidden = YES;
         }
-        
         
         if(self.pageLabel && self.showpageLabel){
             self.pageLabel.hidden = NO;
@@ -161,11 +160,23 @@
         if(self.notScrollWhenNoData){
             self.scrollEnabled = NO;
         }
+        if(_imageURLs.count == 0){
+            if(self.pageControl) self.pageControl.hidden = YES;
+            if(self.pageLabel)   self.pageLabel.hidden = YES; 
+        }
+    }else if(_imageURLs.count>3){
+        if(self.pageControl && self.showPageControl){
+            self.pageControl.hidden = NO;
+        }
+        if(self.pageLabel && self.showpageLabel){
+            self.pageLabel.hidden = NO;
+        }
+        self.scrollEnabled = YES;
     }
     
 }
 - (void)moving{
-    if (self.autoMoving)
+    if (self.autoMoving && _imageURLs.count > 0)
     {
         [self startMoving];
     }else{
@@ -213,6 +224,10 @@
 
 - (void)adjustCurrentPage:(UIScrollView *)scrollView
 {
+    if (self.imageURLs.count <= 0){
+        return;
+    }
+    
     NSInteger page = scrollView.contentOffset.x / self.frame.size.width - 1;
     
     if (scrollView.contentOffset.x < self.frame.size.width)
@@ -243,6 +258,11 @@
     return page;
 }
 - (void)setPageControlIndexWithPage:(NSInteger)page{
+    
+    if (self.imageURLs.count <= 0){
+        return;
+    }
+    
     if(self.showPageControl && self.pageControl){
         if(page<self.pageControl.numberOfPages){
             self.pageControl.currentPage = page;
@@ -313,7 +333,7 @@
         if(self.couldTouchNoData){
             if ([self.loopViewDelegate respondsToSelector:@selector(loopView:didSelected:)])
             {
-                [self.loopViewDelegate loopView:self didSelected:page];
+                [self.loopViewDelegate loopView:self didSelected:0];
             }
         }
     }
@@ -341,15 +361,25 @@
 //用户拖拽完成，恢复自动轮播（如果需要的话）并依据滑动方向来进行相对应的界面变化
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-    if (self.autoMoving)
+    if (self.autoMoving )
     {
-        [self addTimer];
+        if(self.imageURLs.count > 3){
+            [self addTimer];
+        }else{
+            if(self.notAutoMovingWhenNoData == NO){
+                [self addTimer];
+            }
+        }
     }
     //用户手动拖拽的时候 移动到了哪一页
     [self adjustCurrentPage:scrollView];
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView{
+    
+    if (self.imageURLs.count <= 0){
+        return;
+    }
     
     //向左滑动时切换imageView
     if (scrollView.contentOffset.x < self.frame.size.width )
@@ -392,12 +422,19 @@
     [self reloadData];
     [self loadPageControl];
     [self loadPageLabel];
-    if(self.pageControl && self.showPageControl){
+    if(self.pageControl && self.showPageControl && _imageURLs.count > 0){
         self.pageControl.numberOfPages = _imageURLs.count-2;
+    }
+    if(self.pageLabel && self.showpageLabel && _imageURLs.count > 0){
+        self.pageLabel.text = [NSString stringWithFormat:@"%d/%d",(int)([self getCurrentScrolltoIndex:self]+1),(int)self.imageURLs.count-2];
     }
     _needRefresh = YES;
     
     [self judgeMoving];
+    
+    if(_imageURLs.count == 0){
+        [self setContentOffset:CGPointMake(0, 0)];
+    }
     
 }
 @end
